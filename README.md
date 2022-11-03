@@ -7,9 +7,9 @@ A simulation playground for organisms with different learning strategies
 
 ## Running
 
-To run the expriment:
+To run an expriment:
 ```bash
 $ conda activate neural-org
-(neural-org)$ python run.py 0
+(neural-org)$ python run.py configs/exp0.yaml
 ```
 

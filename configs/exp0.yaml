@@ -1,0 +1,5 @@
+meta:
+  name: 'experiment 0'
+  description: 'single agent, no brain, no action'
+agents:
+  num_init: 1
