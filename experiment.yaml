@@ -1,0 +1,16 @@
+meta:
+  name: experiment
+  description: "A simple experiment"
+simulation:
+  num_generations: 50
+  statistics: # a list, the - marks a list entry
+    - generation
+    - population
+    - avg_fitness
+population:
+  size: 50
+  inputs: 3
+  outputs: 3
+  add_node_prob: 0.1
+  add_conn_prob: 0.1
+
