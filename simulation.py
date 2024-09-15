@@ -6,6 +6,8 @@ from typing import List, Dict
 from tqdm import tqdm
 import matplotlib.pyplot as plt
 import numpy as np
+import logging
+import json
 # from gui.pygame_gui import PygameGui
 
 class Simulation:
@@ -30,6 +32,7 @@ class Simulation:
 
         self.config = config
         self.population = population
+        self.stat_freq = 5 # num generations to print
 
         plt.ion()
         plt.show(block=False)
@@ -37,12 +40,17 @@ class Simulation:
     def run(self, verbose=False) -> List:
 
         if verbose:
-            print(self.stat_display_headers)
+            logging.info('stat_headers=' + json.dumps(self.stat_display_headers))
 
         population = self.population
 
+        if (population.size < 2):
+            logging.warn("Population is extinct!")
+            return []
+
         stat_list = []
-        for gen_i in tqdm(range(self.config.num_generations)):
+        #for gen_i in tqdm(range(self.config.num_generations)):
+        for gen_i in range(self.config.num_generations):
 
             stat_dict = population.get_default_stats()
 
@@ -57,15 +65,23 @@ class Simulation:
             # update population
             evolve_stats = population.evolve() # crossover
             stat_dict.update(evolve_stats)
-
-
             stat_list.append(stat_dict)
 
-            if gen_i % 10 == 0 and verbose:
-                self.show_stats(stat_dict)
+            # "housekeeping"
+
+            if verbose:
+
+                # a string of key=value pairs
+                row = ' '.join(["{}={}".format(k,stat_dict[k]) for k in self.stat_display_headers])
+
+                logging.info(row)
+
+                if gen_i % self.stat_freq == 0:
+                    self.display_fitness(stat_dict['fitness_list'])
+                
 
             if (population.size < 2):
-                print("[NOTE]: Population went extinct!")
+                logging.warn("Population went extinct!")
                 break
         
         return stat_list
@@ -94,16 +110,11 @@ class Simulation:
 
 
 
-    def show_stats(self, stat_dict, n_bins=12):
-        
-        row = ("{}\t" * len(self.stat_display_headers))\
-            .format(*[stat_dict[s] for s in self.stat_display_headers])
-        print(row)
-        #print("\ngeneration {generation:04}, avg_fit {avg_fitness}:\n".format(**stat_dict))
-
+    def display_fitness(self, fitness_list, n_bins=12):
+    
         plt.cla()
     
-        plt.hist(stat_dict['fitness_list'], bins=n_bins)
+        plt.hist(fitness_list, bins=n_bins)
         plt.xlim(xmin=-2, xmax = 0.0)
         plt.ylim(ymin=0, ymax = 20)
 
