@@ -27,25 +27,34 @@ def main(args):
     
     config = cfg.load_file(args.config)
 
-    logging_handlers = []
+    logging_handlers = {}
     if args.verbose:
-         logging_handlers.append(logging.StreamHandler(sys.stdout))
+        logging_handlers["STDOUT"] = logging.StreamHandler(sys.stdout)
     if args.save_logs is not None:
-        logging_handlers.append(logging.FileHandler(args.save_logs))
+        logging_handlers["FILE"] = logging.FileHandler(args.save_logs)
 
-    logging.basicConfig(
-        level=logging.INFO, 
-        format="%(asctime)s [%(levelname)s, %(name)s, %(funcName)s] %(message)s",
-        datefmt='%Y-%m-%d %H:%M:%S',
-        handlers=logging_handlers
-    )
+    if len(logging_handlers) == 0:
+        logging.disable(logging.CRITICAL)
+    else:
+        logging.basicConfig(
+            level=logging.INFO, 
+            format="%(asctime)s [%(levelname)s, %(name)s, %(funcName)s] %(message)s",
+            datefmt='%Y-%m-%d %H:%M:%S',
+            handlers=list(logging_handlers.values())
+        )
+
+    logging.info("logging_handlers={}".format(
+        json.dumps(list(logging_handlers.keys()))
+    ))
+
+    
 
     # TODO input/output sizes fixed for now
     population = Population(**config.population)
 
-    simulation = Simulation(config.simulation, population)
+    simulation = Simulation(config.simulation, population, verbose=args.verbose, display=args.display)
 
-    stat_list = simulation.run(verbose=args.verbose)
+    stat_list = simulation.run()
 
     if args.save_stats is not None:
         save_csv(args.save_stats, header=config.simulation.statistics, rows=stat_list)
@@ -61,12 +70,14 @@ if __name__ == "__main__":
     parser.add_argument('-v', '--verbose', action='store_true', 
         help='print logs to stdout')
     
+    parser.add_argument('-d', '--display', action='store_true', 
+        help='display a histogram of the population fitness every 5 generations of the simulation')
+    
     parser.add_argument('-l', '--save_logs', required=False,
         nargs='?', 
         const=dtstamp + ".log",
         help='save logs to file')
     
-    # TODO: untested
     parser.add_argument('-s', '--save_stats', required=False,
         nargs='?', 
         const="stats-" + dtstamp + ".csv",

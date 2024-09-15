@@ -28,19 +28,20 @@ class Simulation:
 
 
     # TODO add an Environment class that serves as simulation grounds
-    def __init__(self, config, population: Population):
+    def __init__(self, config, population: Population, display: bool, verbose: bool):
 
         self.config = config
         self.population = population
-        self.stat_freq = 5 # num generations to print
+        self.display_freq = 5 # num generations to display
+        self.display = display
+        self.verbose = verbose
 
         plt.ion()
         plt.show(block=False)
 
-    def run(self, verbose=False) -> List:
+    def run(self) -> List:
 
-        if verbose:
-            logging.info('stat_headers=' + json.dumps(self.stat_display_headers))
+        logging.info('stat_headers=' + json.dumps(self.stat_display_headers))
 
         population = self.population
 
@@ -49,8 +50,10 @@ class Simulation:
             return []
 
         stat_list = []
-        #for gen_i in tqdm(range(self.config.num_generations)):
-        for gen_i in range(self.config.num_generations):
+        gen_range = range(self.config.num_generations)
+        if not self.verbose: gen_range = tqdm(gen_range) # give user chance to see progress
+        
+        for gen_i in gen_range:
 
             stat_dict = population.get_default_stats()
 
@@ -69,16 +72,12 @@ class Simulation:
 
             # "housekeeping"
 
-            if verbose:
+            if self.display and (gen_i % self.display_freq == 0):
+                self.display_fitness(stat_dict['fitness_list'])
 
-                # a string of key=value pairs
-                row = ' '.join(["{}={}".format(k,stat_dict[k]) for k in self.stat_display_headers])
-
-                logging.info(row)
-
-                if gen_i % self.stat_freq == 0:
-                    self.display_fitness(stat_dict['fitness_list'])
-                
+            # a string of key=value pairs
+            row = ' '.join(["{}={}".format(k,stat_dict[k]) for k in self.stat_display_headers])
+            logging.info(row)
 
             if (population.size < 2):
                 logging.warn("Population went extinct!")
