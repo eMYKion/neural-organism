@@ -22,7 +22,7 @@ and the population keeps the most fit genomes. Then the population 'evolves'
 
 # TODO
 - replace placeholder fitness function
-- use an Environment witha 2D grid for entities to move
+- use an Environment with a 2D grid for entities to move
 - control movement with neural network outputs
 
 ## Setup
@@ -33,7 +33,7 @@ and the population keeps the most fit genomes. Then the population 'evolves'
 
 To run an expriment:
 ```bash
-$ conda activate neural-org
+$ conda activate neat
 (neural-org)$ python run.py experiment.yaml -s -v
 ```
 

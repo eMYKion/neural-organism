@@ -1,4 +1,4 @@
-name: neural-org
+name: neat
 channels:
   - defaults
 dependencies:
