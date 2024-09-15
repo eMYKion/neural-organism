@@ -47,8 +47,6 @@ def main(args):
         json.dumps(list(logging_handlers.keys()))
     ))
 
-    
-
     # TODO input/output sizes fixed for now
     population = Population(**config.population)
 

@@ -1,14 +1,12 @@
 from population import Population
 from genome import Genome
 import numpy as np
-from enum import Enum
 from typing import List, Dict
 from tqdm import tqdm
 import matplotlib.pyplot as plt
 import numpy as np
 import logging
 import json
-# from gui.pygame_gui import PygameGui
 
 class Simulation:
     """class for an simulation"""
@@ -18,14 +16,6 @@ class Simulation:
         'avg_added_nodes', "avg_added_conns", 
         "avg_mutated_weights", "avg_mutated_biases",
     )
-
-    '''
-    "avg_added_nodes"
-    "avg_added_conns"
-    "avg_mutated_weights"
-    "avg_mutated_biases"
-    '''
-
 
     # TODO add an Environment class that serves as simulation grounds
     def __init__(self, config, population: Population, display: bool, verbose: bool):
@@ -59,11 +49,8 @@ class Simulation:
 
             # TODO how do you want to evaluate an entity?
             
-
             select_dict = population.select(self.fitness)
             stat_dict.update(select_dict)
-
-            # stats = {k:stat_dict[k] for k in self.config.statistics}
 
             # update population
             evolve_stats = population.evolve() # crossover
@@ -113,11 +100,11 @@ class Simulation:
 
 
 
-    def display_histograms(self, data_dict, n_bins=12):
+    def display_histograms(self, data_dict: Dict, n_bins=12):
     
         plt.cla()
     
-        N = len(data_dict) # test 2
+        N = len(data_dict)
         if N > 2:
             logging.warn("more than two plots for display")
         
@@ -132,13 +119,8 @@ class Simulation:
                 axes[i].set_ylim(ymin=0, ymax = 20)
 
         for ax in axes:
-            ax.set_xlabel('Values') # TODO: read from list
+            ax.set_xlabel('Values')
             ax.set_ylabel('Frequency')
-        
-        # plt.hist(lists, bins=n_bins)
-
-        #plt.xlim(xmin=-2, xmax = 0.0)
-        #plt.ylim(ymin=0, ymax = 20)
 
         plt.draw()
         plt.pause(1e-1)
