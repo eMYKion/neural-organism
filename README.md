@@ -24,6 +24,7 @@ and the population keeps the most fit genomes. Then the population 'evolves'
 - replace placeholder fitness function
 - use an Environment with a 2D grid for entities to move
 - control movement with neural network outputs
+- memory and time profiling
 
 ## Setup
 - anaconda or miniconda/python3.9: `$ conda env create -f environment.yml`

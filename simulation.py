@@ -68,12 +68,16 @@ class Simulation:
             # update population
             evolve_stats = population.evolve() # crossover
             stat_dict.update(evolve_stats)
+
             stat_list.append(stat_dict)
 
             # "housekeeping"
 
             if self.display and (gen_i % self.display_freq == 0):
-                self.display_fitness(stat_dict['fitness_list'])
+                self.display_histograms({
+                    "Fitness": stat_dict['fitness_list'],
+                    "Neuron Count": stat_dict['node_count_list'],
+                })
 
             # a string of key=value pairs
             row = ' '.join(["{}={}".format(k,stat_dict[k]) for k in self.stat_display_headers])
@@ -109,13 +113,32 @@ class Simulation:
 
 
 
-    def display_fitness(self, fitness_list, n_bins=12):
+    def display_histograms(self, data_dict, n_bins=12):
     
         plt.cla()
     
-        plt.hist(fitness_list, bins=n_bins)
-        plt.xlim(xmin=-2, xmax = 0.0)
-        plt.ylim(ymin=0, ymax = 20)
+        N = len(data_dict) # test 2
+        if N > 2:
+            logging.warn("more than two plots for display")
+        
+        fig, axes = plt.subplots(nrows=1, ncols=N, figsize=(12, 4))
+
+        for i, title in enumerate(data_dict.keys()):
+            axes[i].hist(data_dict[title], bins=n_bins, edgecolor='black')
+            axes[i].set_title(f'{title} {i+1}/{N}')
+
+            if (title == "Fitness"):
+                axes[i].set_xlim(xmin=-2, xmax = 0.0)
+                axes[i].set_ylim(ymin=0, ymax = 20)
+
+        for ax in axes:
+            ax.set_xlabel('Values') # TODO: read from list
+            ax.set_ylabel('Frequency')
+        
+        # plt.hist(lists, bins=n_bins)
+
+        #plt.xlim(xmin=-2, xmax = 0.0)
+        #plt.ylim(ymin=0, ymax = 20)
 
         plt.draw()
         plt.pause(1e-1)

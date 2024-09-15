@@ -156,6 +156,7 @@ class Genome:
 
     def forward(self, inputs, max_tries=10, tol=1e-4):
         # TODO make batched
+        # values are stacked INPUTS, OUTPUTS, then HIDDEN
         values = np.zeros(len(self.nodes))
         values[:self.inputs] = inputs
         '''

@@ -88,4 +88,7 @@ class Population:
             'generation': self.generation,
             "avg_nodes" : sum(nodes)/len(nodes),
             "avg_enabled_genes" : sum(enabled_genes)/len(enabled_genes),
+            
+            "enabled_gene_count_list": enabled_genes,
+            "node_count_list": nodes,
         }
