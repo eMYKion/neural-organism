@@ -8,7 +8,7 @@ run-profiler:
 	cat profile.log | grep -E "(genome|population|run|simulation).py"
 
 clean:
-	find . | grep -E "(/__pycache__$|\.pyc$|\.pyo$)" | xargs rm -rf
+	find . -type f -name '*.py[co]' -delete -o -type d -name __pycache__ -delete
 
 conda-export:
 	conda env export | grep -v "^prefix: " > environment.yml
